@@ -26,5 +26,13 @@ pipeline {
                 sh 'sudo docker run -itd --name C2 -p 83:80 image1'
             }
         }
+       stage('Run Tests') {
+            steps {
+              sh 'npm test'      // for Node
+              sh 'pytest'        // for Python
+              sh 'mvn test'      // for Java
+    }
+}
+ 
     }
 }
