@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        EMAIL_RECIPIENT = 'siddikhshaikh786@gmail.com'
+    }
+
     stages {
         stage('Checkout') {
             steps {
@@ -26,13 +30,47 @@ pipeline {
                 sh 'sudo docker run -itd --name C2 -p 83:80 image1'
             }
         }
-       stage('Run Tests') {
+
+        stage('Run Tests') {
             steps {
-              sh 'npm test'      // for Node
-              sh 'pytest'        // for Python
-              sh 'mvn test'      // for Java
+                // These are examples. Keep only the one you need based on your project type.
+                // sh 'npm test'    // Uncomment for Node.js
+                // sh 'pytest'      // Uncomment for Python
+                // sh 'mvn test'    // Uncomment for Java
+                echo 'Running dummy test...'
+            }
+        }
     }
-}
- 
+
+    post {
+        success {
+            mail to: "${EMAIL_RECIPIENT}",
+                 subject: "✅ Build Success: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                 body: """Hello Siddik,
+
+✅ Jenkins job *${env.JOB_NAME}* completed successfully!
+
+- Build Number: ${env.BUILD_NUMBER}
+- Build URL: ${env.BUILD_URL}
+
+Regards,
+Jenkins"""
+        }
+
+        failure {
+            mail to: "${EMAIL_RECIPIENT}",
+                 subject: "❌ Build Failed: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                 body: """Hello Siddik,
+
+❌ Jenkins job *${env.JOB_NAME}* failed.
+
+- Build Number: ${env.BUILD_NUMBER}
+- Build URL: ${env.BUILD_URL}
+
+Please check the logs and fix the issue.
+
+Regards,
+Jenkins"""
+        }
     }
 }
